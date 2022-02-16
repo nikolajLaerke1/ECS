@@ -1,20 +1,19 @@
 ﻿using System;
-using ECSModern;
 
-namespace ECS.Legacy
+namespace ECSModern;
+
+
+internal class FakeTempSensor : ITempSensor
 {
-    internal class FakeTempSensor : ITempSensor
+    public int fakeTemp { get; set; } = 10;
+
+    public int GetTemp()
     {
-        public int fakeTemp { get; set; } = 10;
+        return fakeTemp;
+    }
 
-        public int GetTemp()
-        {
-            return fakeTemp;
-        }
-
-        public bool RunSelfTest()
-        {
-            return true;
-        }
+    public bool RunSelfTest()
+    {
+        return true;
     }
 }
