@@ -1,5 +1,6 @@
 ﻿using System;
 namespace ECSModern;
+
 class Program
 {
     static void Main(string[] args)
