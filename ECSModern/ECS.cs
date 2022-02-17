@@ -6,13 +6,13 @@ namespace ECSModern
 {
     public class ECS
     {
-        private int _threshold;
+        public int _threshold { get; set; }
         private readonly ITempSensor _tempSensor;
         private readonly IHeater _heater;
 
-        public ECS(int thr, ITempSensor tempSensor,  IHeater heater)
+        public ECS(int thr, ITempSensor tempSensor, IHeater heater)
         {
-            SetThreshold(thr);
+            _threshold = thr;
             _tempSensor = tempSensor;
             _heater = heater;
         }
@@ -25,16 +25,6 @@ namespace ECSModern
                 _heater.TurnOn();
             else
                 _heater.TurnOff();
-        }
-
-        public void SetThreshold(int thr)
-        {
-            _threshold = thr;
-        }
-
-        public int GetThreshold()
-        {
-            return _threshold;
         }
 
         public int GetCurTemp()

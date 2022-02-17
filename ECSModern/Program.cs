@@ -8,7 +8,7 @@ class Program
         Console.WriteLine("Testing ECS.Legacy");
 
         // Make an ECS with a threshold of 23
-        var control = new ECS(23);
+        var control = new ECS(23, new TempSensor(), new Heater());
 
         for (int i = 1; i <= 15; i++)
         {

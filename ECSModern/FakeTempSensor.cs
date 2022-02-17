@@ -3,7 +3,7 @@
 namespace ECSModern;
 
 
-internal class FakeTempSensor : ITempSensor
+public class FakeTempSensor : ITempSensor
 {
     public int fakeTemp { get; set; } = 10;
 

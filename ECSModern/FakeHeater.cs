@@ -2,17 +2,19 @@
 
 public class FakeHeater : IHeater
 {
-    public string TurnOnString { get; set; } = "Heater is on";
-    public string TurnOffString { get; set; } = "Heater is off";
+    public int TurnOnCount = 0;
+    public int TurnOffCount = 0;
 
     public void TurnOn()
     {
-        System.Console.WriteLine(TurnOnString);
+        TurnOnCount++;
+        Console.WriteLine("Heater is on");
     }
 
     public void TurnOff()
     {
-        System.Console.WriteLine(TurnOffString);
+        TurnOffCount++;
+        Console.WriteLine("Heater is off");
     }
 
     public bool RunSelfTest()
