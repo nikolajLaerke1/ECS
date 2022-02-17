@@ -16,7 +16,5 @@ class Program
 
             control.Regulate();
         }
-
-
     }
 }
