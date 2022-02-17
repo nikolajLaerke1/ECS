@@ -5,18 +5,13 @@ namespace ECSTest;
 
 public class Tests
 {
-	private ECSModern.IHeater _uut;
+	private ECSModern.ECS _uut;
 	[SetUp]
 	public void Setup()
 	{
-		_uut = new ECSModern.Heater();
+		_uut = new ECSModern.ECS(15);
 	}
 
 	[Test]
-	public void TestHeater()
-	{
-		Assert.Pass();
-	}
-	
-	
+	public void TestHeater() => Assert.That(_uut.RunSelfTest, Is.True);
 }

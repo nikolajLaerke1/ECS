@@ -10,11 +10,11 @@ namespace ECSModern
         private readonly ITempSensor _tempSensor;
         private readonly IHeater _heater;
 
-        public ECS(int thr)
+        public ECS(int thr, ITempSensor tempSensor,  IHeater heater)
         {
             SetThreshold(thr);
-            _tempSensor = new TempSensor();
-            _heater = new Heater();
+            _tempSensor = tempSensor;
+            _heater = heater;
         }
 
         public void Regulate()
@@ -25,7 +25,6 @@ namespace ECSModern
                 _heater.TurnOn();
             else
                 _heater.TurnOff();
-
         }
 
         public void SetThreshold(int thr)
