@@ -17,7 +17,7 @@ public class Tests
         fakeTempSensor = Substitute.For<ITempSensor>();
         fakeHeater = Substitute.For<IHeater>();
 
-        _uut = new ECSModern.ECS(15, _fakeTempSensor, _fakeHeater, _fakeWindows);
+        _uut = new ECSModern.ECS(15, fakeTempSensor, fakeHeater);
 	}
 
     [TestCase(10, 15, 1, 0)]
@@ -25,7 +25,7 @@ public class Tests
     [TestCase(15, 10, 0, 1)]
     [TestCase(15, 15, 0, 1)]
 
-    public void ECSRegulate_Temp10Thr15_TurnOnCount1(int Temp, int thr, int turnOnCount, int turnOffCount)
+    public void ECSRegulate_GetTemp_TurnOnAndOffCount(int Temp, int thr, int turnOnCount, int turnOffCount)
     {
         fakeTempSensor.GetTemp().Returns(Temp);
         _uut._threshold = thr;
