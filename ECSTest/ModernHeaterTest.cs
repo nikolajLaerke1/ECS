@@ -17,7 +17,7 @@ public class Tests
         fakeTempSensor = Substitute.For<ITempSensor>();
         fakeHeater = Substitute.For<IHeater>();
 
-        _uut = new ECSModern.ECS(15, fakeTempSensor, fakeHeater);
+        _uut = new ECSModern.ECS(15, _fakeTempSensor, _fakeHeater, _fakeWindows);
 	}
 
     [TestCase(10, 15, 1, 0)]
@@ -47,7 +47,6 @@ public class Tests
 
         Assert.That(_uut.RunSelfTest, Is.EqualTo(result));
     }
-
 
 
 }
