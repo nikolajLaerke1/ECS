@@ -1,66 +1,51 @@
 using NUnit.Framework;
 using ECS = ECS.Legacy.ECS;
 using ECSModern;
+using NSubstitute;
 
 namespace ECSTest;
 
 public class Tests
 {
 	private ECSModern.ECS _uut;
-    private FakeTempSensor fakeTempSensor;
-    private FakeHeater fakeHeater;
+    private ITempSensor fakeTempSensor;
+    private IHeater fakeHeater;
 
 	[SetUp]
 	public void Setup()
     {
-        fakeTempSensor = new();
-        fakeHeater = new();
+        fakeTempSensor = Substitute.For<ITempSensor>();
+        fakeHeater = Substitute.For<IHeater>();
 
         _uut = new ECSModern.ECS(15, fakeTempSensor, fakeHeater);
 	}
 
-    [Test]
-    public void ECSRegulate_Temp10Thr15_TurnOnCount1()
+    [TestCase(10, 15, 1, 0)]
+    [TestCase(20, 15, 0, 1)]
+    [TestCase(15, 10, 0, 1)]
+    [TestCase(15, 15, 0, 1)]
+
+    public void ECSRegulate_Temp10Thr15_TurnOnCount1(int Temp, int thr, int turnOnCount, int turnOffCount)
     {
-        fakeTempSensor.fakeTemp = 10;
+        fakeTempSensor.GetTemp().Returns(Temp);
+        _uut._threshold = thr;
+        
         _uut.Regulate();
 
-        Assert.That(fakeHeater.TurnOnCount, Is.EqualTo(1));
-        Assert.That(fakeHeater.TurnOffCount, Is.EqualTo(0));
+        fakeHeater.Received(turnOnCount).TurnOn();
+        fakeHeater.Received(turnOffCount).TurnOff();
     }
 
-    [Test]
-    public void ECSRegulate_Temp20Thr15_TurnOffCount1()
+    [TestCase(true, true, true)]
+    [TestCase(false, true, false)]
+    [TestCase(true, false, false)]
+    [TestCase(false, false, false)]
+    public void ECSRunSelfTests_True(bool tempSensorTest, bool heaterTest, bool result)
     {
-        fakeTempSensor.fakeTemp = 20;
-        _uut.Regulate();
+        fakeTempSensor.RunSelfTest().Returns(tempSensorTest);
+        fakeHeater.RunSelfTest().Returns(heaterTest);
 
-        Assert.That(fakeHeater.TurnOnCount, Is.EqualTo(0));
-        Assert.That(fakeHeater.TurnOffCount, Is.EqualTo(1));
-    }
-
-    [Test]
-    public void ECSRegulate_Temp15Thr15_TurnOffCount1()
-    {
-        fakeTempSensor.fakeTemp = 15;
-        _uut.Regulate();
-
-        Assert.That(fakeHeater.TurnOnCount, Is.EqualTo(0));
-        Assert.That(fakeHeater.TurnOffCount, Is.EqualTo(1));
-    }
-
-    [Test]
-    public void ECSGetTemp_Temp15_15()
-    {
-        fakeTempSensor.fakeTemp = 15;
-
-        Assert.That(_uut.GetCurTemp, Is.EqualTo(fakeTempSensor.fakeTemp));
-    }
-
-    [Test]
-    public void ECSRunSelfTests_True()
-    {
-        Assert.That(_uut.RunSelfTest, Is.True);
+        Assert.That(_uut.RunSelfTest, Is.EqualTo(result));
     }
 
 
