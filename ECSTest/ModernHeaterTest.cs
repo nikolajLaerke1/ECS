@@ -8,68 +8,44 @@ namespace ECSTest;
 public class Tests
 {
 	private ECSModern.ECS _uut;
-    private ITempSensor _fakeTempSensor;
-    private IHeater _fakeHeater;
-    private IWindows _fakeWindows;
+    private ITempSensor fakeTempSensor;
+    private IHeater fakeHeater;
 
 	[SetUp]
 	public void Setup()
     {
-        _fakeTempSensor = Substitute.For<ITempSensor>();
-        _fakeHeater = Substitute.For<IHeater>();
-        _fakeWindows = Substitute.For<IWindows>();
+        fakeTempSensor = Substitute.For<ITempSensor>();
+        fakeHeater = Substitute.For<IHeater>();
 
-        _uut = new ECSModern.ECS(15, _fakeTempSensor, _fakeHeater, _fakeWindows);
+        _uut = new ECSModern.ECS(15, fakeTempSensor, fakeHeater);
 	}
 
-    [Test]
-    public void ECSRegulate_Temp10Thr15_TurnOnCount1()
-    {
-        _fakeTempSensor.GetTemp().Returns(10);
-        _uut.Regulate();
-        _fakeHeater.Received(1).TurnOn();
-        _fakeHeater.DidNotReceive().TurnOff();
-        _fakeWindows.Received(1).Close();
-        _fakeWindows.DidNotReceive().Open();
-    }
+    [TestCase(10, 15, 1, 0)]
+    [TestCase(20, 15, 0, 1)]
+    [TestCase(15, 10, 0, 1)]
+    [TestCase(15, 15, 0, 1)]
 
-    [Test]
-    public void ECSRegulate_Temp20Thr15_TurnOffCount1()
+    public void ECSRegulate_GetTemp_TurnOnAndOffCount(int Temp, int thr, int turnOnCount, int turnOffCount)
     {
-        _fakeTempSensor.GetTemp().Returns(20);
+        fakeTempSensor.GetTemp().Returns(Temp);
+        _uut._threshold = thr;
+        
         _uut.Regulate();
 
-        _fakeHeater.Received(1).TurnOff();
-        _fakeHeater.DidNotReceive().TurnOn();
-        _fakeWindows.Received(1).Open();
-        _fakeWindows.DidNotReceive().Close();
+        fakeHeater.Received(turnOnCount).TurnOn();
+        fakeHeater.Received(turnOffCount).TurnOff();
     }
 
-    [Test]
-    public void ECSRegulate_Temp15Thr15_TurnOffCount1()
+    [TestCase(true, true, true)]
+    [TestCase(false, true, false)]
+    [TestCase(true, false, false)]
+    [TestCase(false, false, false)]
+    public void ECSRunSelfTests_True(bool tempSensorTest, bool heaterTest, bool result)
     {
-        _fakeTempSensor.GetTemp().Returns(15);
-        _uut.Regulate();
+        fakeTempSensor.RunSelfTest().Returns(tempSensorTest);
+        fakeHeater.RunSelfTest().Returns(heaterTest);
 
-        _fakeHeater.Received(1).TurnOff();
-        _fakeHeater.DidNotReceive().TurnOn();
-        _fakeWindows.Received(1).Open();
-        _fakeWindows.DidNotReceive().Close();
-    }
-
-    [Test]
-    public void ECSGetTemp_Temp15_15()
-    {
-        _fakeTempSensor.GetTemp().Returns(15);
-
-        Assert.That(_uut.GetCurTemp(),Is.EqualTo(15));
-    }
-
-
-    [Test]
-    public void ecsrunselftests_true()
-    {
-        Assert.That(_uut.RunSelfTest, Is.True);
+        Assert.That(_uut.RunSelfTest, Is.EqualTo(result));
     }
 
 }

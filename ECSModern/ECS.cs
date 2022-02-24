@@ -9,14 +9,12 @@ namespace ECSModern
         public int _threshold { get; set; }
         private readonly ITempSensor _tempSensor;
         private readonly IHeater _heater;
-        private readonly IWindows _windows;
 
-        public ECS(int thr, ITempSensor tempSensor, IHeater heater, IWindows windows)
+        public ECS(int thr, ITempSensor tempSensor, IHeater heater)
         {
             _threshold = thr;
             _tempSensor = tempSensor;
             _heater = heater;
-            _windows = windows;
         }
 
         public void Regulate()
@@ -26,12 +24,10 @@ namespace ECSModern
             if (t < _threshold)
             {
                 _heater.TurnOn();
-                _windows.Close();
                 return;
             }  
             
             _heater.TurnOff();
-            _windows.Open();
             
         }
 
